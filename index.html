@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solar — Talk to your wallet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="icon128.png" />
+</head>
+<body>
+
+  <div class="grain"></div>
+
+  <!-- ── Nav ── -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="nav-logo" href="#">
+        <img src="icon128.png" alt="Solar" />
+        Solar
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#security">Security</a>
+      </div>
+      <a href="https://x.com/GetSolarWallet" target="_blank" rel="noopener" class="nav-x" title="@GetSolarWallet on X">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.74l7.73-8.835L1.254 2.25H8.08l4.259 5.631 5.905-5.631zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      </a>
+      <a href="#install" class="nav-cta">Get Solar →</a>
+    </div>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <div class="hero-bg-lines" aria-hidden="true">
+      <span></span><span style="visibility:hidden"></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="hero-layout">
+      <!-- left -->
+      <div class="hero-text">
+        <div class="hero-kicker">
+          <span class="kicker-dot"></span>
+          Solana · AI Agent · Non-custodial
+        </div>
+        <h1>
+          Talk<br/>
+          to your<br/>
+          <em>wallet.</em>
+        </h1>
+        <p class="hero-desc">
+          Solar turns plain language into signed transactions. Swap, send, burn, or manage tokens — just describe it in any language. The AI handles the rest.
+        </p>
+        <div class="hero-ctas">
+          <a href="#install" class="cta-primary">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v8M4.5 7l3.5 3.5L11.5 7M1 14h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Add to Chrome
+          </a>
+          <a href="#how" class="cta-ghost">How it works</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><strong>Llama 3.3</strong><span>70B model</span></div>
+          <div class="stat-sep"></div>
+          <div class="stat"><strong>Jupiter</strong><span>Swap routing</span></div>
+          <div class="stat-sep"></div>
+          <div class="stat"><strong>AES-GCM</strong><span>Encryption</span></div>
+        </div>
+      </div>
+
+      <!-- right -->
+      <div class="hero-mockup-wrap">
+        <div class="mockup-glow"></div>
+        <div class="chat-window">
+          <div class="cw-bar">
+            <div class="cw-dots"><i></i><i></i><i></i></div>
+            <span>Solar</span>
+          </div>
+          <div class="cw-body">
+            <div class="cw-msg cw-user"><span>swap 50 USDC for SOL</span></div>
+            <div class="cw-msg cw-agent">
+              <div class="cw-avatar"><img src="icon128.png" alt="" /></div>
+              <div class="cw-bubble">
+                <div class="qcard">
+                  <div class="qrow"><span>Pay</span><b>50 USDC</b></div>
+                  <div class="qrow"><span>Receive</span><b>≈ 0.312 SOL</b></div>
+                  <div class="qrow"><span>Impact</span><b class="ok">0.03%</b></div>
+                  <div class="qrow"><span>Route</span><b>Jupiter · 3 hops</b></div>
+                </div>
+                <div class="qoptions">
+                  <span class="qopt"><em>1.</em> Yes</span>
+                  <span class="qopt qopt-no"><em>2.</em> No</span>
+                </div>
+              </div>
+            </div>
+            <div class="cw-msg cw-user"><span>close all empty accounts</span></div>
+            <div class="cw-msg cw-agent">
+              <div class="cw-avatar"><img src="icon128.png" alt="" /></div>
+              <div class="cw-bubble">
+                Found <b>7 zero-balance accounts</b>. Closing them will reclaim <b>≈ 0.018 SOL</b> in rent.
+                <div class="qoptions">
+                  <span class="qopt"><em>1.</em> Yes</span>
+                  <span class="qopt qopt-no"><em>2.</em> No</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="cw-input">
+            <span class="cw-typed">1<span class="cw-cursor">|</span></span>
+            <button>
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M12.5 1.5L1.5 7l5 1.5L8 12.5l4.5-11z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <a href="#features" class="scroll-hint" aria-label="Scroll down">
+      <span class="scroll-hint-label">scroll</span>
+      <span class="scroll-hint-arrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </span>
+    </a>
+
+  </section>
+
+  <!-- ── Features ── -->
+  <section class="section" id="features">
+    <div class="container">
+      <div class="section-head">
+        <p class="label">Features</p>
+        <h2>One wallet.<br/>Every move.</h2>
+      </div>
+
+      <div class="feat-rows">
+
+        <div class="feat-row">
+          <div class="feat-row-text">
+            <div class="feat-tag">AI Agent</div>
+            <h3>No menus. Just words.</h3>
+            <p>Describe any transaction in plain English. Solar's AI agent — powered by Llama 3.3 70B via Groq — sees your full wallet state and translates intent into signed transactions.</p>
+            <div class="chips">
+              <span>"swap 100 USDC for BONK"</span>
+              <span>"send 0.5 SOL to alice"</span>
+              <span>"close empty token accounts"</span>
+              <span>"burn my DUST"</span>
+            </div>
+          </div>
+          <div class="feat-row-visual ai-visual">
+            <div class="ai-flow">
+              <div class="ai-node input-node">
+                <span class="ai-node-label">You say</span>
+                <div class="ai-node-content">"swap 50 USDC for SOL"</div>
+              </div>
+              <div class="ai-arrow">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M10 4l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="ai-node brain-node">
+                <span class="ai-node-label">Llama 3.3 70B</span>
+                <div class="ai-node-content">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="8" width="14" height="12" rx="2"/><circle cx="9.5" cy="14" r="1.2" fill="var(--accent)" stroke="none"/><circle cx="14.5" cy="14" r="1.2" fill="var(--accent)" stroke="none"/><path d="M9 18h6"/></svg>
+                </div>
+              </div>
+              <div class="ai-arrow">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M10 4l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="ai-node engine-node">
+                <span class="ai-node-label">Solar Engine</span>
+                <div class="ai-node-content engine-call">
+                  <img src="icon128.png" width="28" height="28" alt="" />
+                </div>
+              </div>
+              <div class="ai-arrow">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M10 4l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="ai-node tx-node">
+                <span class="ai-node-label">Signed tx</span>
+                <div class="ai-node-content success-dot">✓ Sent</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="feat-row feat-row-rev">
+          <div class="feat-row-text">
+            <div class="feat-tag">Swaps</div>
+            <h3>Jupiter-powered quotes, before you commit.</h3>
+            <p>ExactIn or ExactOut — spend a fixed amount or target a specific receive. Full quote preview with price impact, slippage, and multi-hop route shown before any confirmation.</p>
+          </div>
+          <div class="feat-row-visual">
+            <div class="swap-card">
+              <div class="swap-header">Quote preview</div>
+              <div class="swap-body">
+                <div class="swap-row"><span>You pay</span><strong>100 USDC</strong></div>
+                <div class="swap-row"><span>You receive</span><strong class="ok">≈ 0.624 SOL</strong></div>
+                <div class="swap-row"><span>Price impact</span><strong class="ok">0.05%</strong></div>
+                <div class="swap-row"><span>Slippage</span><strong>0.5%</strong></div>
+                <div class="swap-row"><span>Route</span><strong>Jupiter · 4 hops</strong></div>
+              </div>
+              <div class="swap-footer">
+                <span class="qopt"><em>1.</em> Yes</span>
+                <span class="qopt qopt-no"><em>2.</em> No</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="feat-row">
+          <div class="feat-row-text">
+            <div class="feat-tag">Wallet</div>
+            <h3>Multiple accounts. Named contacts.</h3>
+            <p>Create or import as many wallets as you need, switch by name. Save contacts to your address book and use them naturally — "send 1 SOL to alex" just resolves.</p>
+          </div>
+          <div class="feat-row-visual">
+            <div class="contacts-card">
+              <div class="contacts-row">
+                <div class="contact-avatar" style="background:#d04e0c22;color:#d04e0c">A</div>
+                <div class="contact-info"><strong>alex</strong><span>8xF3…kB2m</span></div>
+                <span class="contact-check">✓</span>
+              </div>
+              <div class="contacts-row">
+                <div class="contact-avatar" style="background:#4cd96422;color:#4cd964">M</div>
+                <div class="contact-info"><strong>mom</strong><span>3rT9…wQ1n</span></div>
+              </div>
+              <div class="contacts-row">
+                <div class="contact-avatar" style="background:#5ac8fa22;color:#5ac8fa">B</div>
+                <div class="contact-info"><strong>bob</strong><span>Cv8h…pL5j</span></div>
+              </div>
+              <div class="contacts-add">
+                <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M7 1.5v11M1.5 7h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                Add contact
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Coming Soon ── -->
+  <section class="section section-dark" id="coming-soon">
+    <div class="container">
+      <div class="section-head">
+        <p class="label soon-label">Coming soon</p>
+        <h2>What's next<br/>for Solar.</h2>
+      </div>
+
+      <div class="soon-grid">
+
+        <!-- Workflows -->
+        <div class="soon-card soon-card-large">
+          <div class="soon-badge">In development</div>
+          <div class="soon-card-inner">
+            <div class="soon-icon">
+              <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><rect x="2" y="6" width="7" height="5" rx="1.5" stroke="var(--accent)" stroke-width="1.4"/><rect x="17" y="6" width="7" height="5" rx="1.5" stroke="var(--accent)" stroke-width="1.4"/><rect x="9.5" y="15" width="7" height="5" rx="1.5" stroke="var(--accent)" stroke-width="1.4"/><path d="M9 8.5H5.5v6h7.5M17 8.5h-4M13 11v4" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <h3>Workflows</h3>
+            <p class="soon-desc">Background processes you program in plain language — no code, no scripts. Just describe what your wallet should do automatically, and Solar runs it silently in the background.</p>
+            <div class="workflow-examples">
+              <div class="wf-example">
+                <div class="wf-trigger">
+                  <span class="wf-label">Trigger</span>
+                  <span>"If SOL drops below $120"</span>
+                </div>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M3 8l4 4 4-4" stroke="var(--t3)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <div class="wf-action">
+                  <span class="wf-label">Action</span>
+                  <span>"Swap 30% of my USDC to SOL"</span>
+                </div>
+              </div>
+              <div class="wf-example">
+                <div class="wf-trigger">
+                  <span class="wf-label">Trigger</span>
+                  <span>"Every Friday at 18:00"</span>
+                </div>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M3 8l4 4 4-4" stroke="var(--t3)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <div class="wf-action">
+                  <span class="wf-label">Action</span>
+                  <span>"Send 10 USDC to savings wallet"</span>
+                </div>
+              </div>
+              <div class="wf-example">
+                <div class="wf-trigger">
+                  <span class="wf-label">Trigger</span>
+                  <span>"If my SOL balance exceeds 10"</span>
+                </div>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M3 8l4 4 4-4" stroke="var(--t3)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <div class="wf-action">
+                  <span class="wf-label">Action</span>
+                  <span>"Swap the excess to USDC"</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Private transfers -->
+        <div class="soon-card">
+          <div class="soon-badge">In development</div>
+          <div class="soon-card-inner">
+            <div class="soon-icon">
+              <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M13 3C8 3 4 8 4 13s4 10 9 10 9-5 9-10S18 3 13 3z" stroke="var(--accent)" stroke-width="1.4"/><path d="M10 13s.8 2 3 2 3-2 3-2" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round"/><circle cx="10" cy="10.5" r="1" fill="var(--accent)"/><circle cx="16" cy="10.5" r="1" fill="var(--accent)"/><path d="M4 5L2 3M22 5l2-3" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round"/></svg>
+            </div>
+            <h3>Private Transfers</h3>
+            <p class="soon-desc">Send tokens without exposing the recipient or amount on-chain. Confidential transfers built directly into the Solar chat — same interface, zero trace.</p>
+            <div class="private-features">
+              <div class="pf-item">
+                <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Hidden sender &amp; recipient
+              </div>
+              <div class="pf-item">
+                <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Concealed transfer amount
+              </div>
+              <div class="pf-item">
+                <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Same natural language interface
+              </div>
+              <div class="pf-item">
+                <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                SOL &amp; SPL token support
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── dApp ── -->
+  <section class="section section-dark" id="dapp">
+    <div class="container">
+      <div class="dapp-split">
+        <div>
+          <p class="label">dApp Integration</p>
+          <h2>Works with every<br/>Solana dApp.</h2>
+          <p class="dapp-sub">Wallet Standard and legacy <code>window.solana</code> — if a Solana dApp has a "Connect Wallet" button, Solar appears. Per-connection approval popup, per-transaction signing request. Nothing happens without your tap.</p>
+        </div>
+        <div class="dapp-badges">
+          <div class="dapp-badge">Wallet Standard</div>
+          <div class="dapp-badge">window.solana</div>
+          <div class="dapp-badge">signTransaction</div>
+          <div class="dapp-badge">signAndSendTransaction</div>
+          <div class="dapp-badge">signMessage</div>
+          <div class="dapp-badge">connect / disconnect</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Security ── -->
+  <section class="section" id="security">
+    <div class="container">
+      <div class="section-head">
+        <p class="label">Security</p>
+        <h2>Your keys never leave<br/>your device.</h2>
+      </div>
+      <div class="sec-grid">
+        <div class="sec-item">
+          <div class="sec-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 6v6c0 4.42 3.36 8.57 8 9.56C16.64 20.57 20 16.42 20 12V6l-8-4z" stroke="var(--accent)" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h4>AES-GCM vault</h4>
+          <p>Keys encrypted with PBKDF2-derived key. Zero plaintext ever written to disk.</p>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="10" rx="2" stroke="var(--accent)" stroke-width="1.5"/><path d="M8 11V7a4 4 0 018 0v4" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <h4>Session lock</h4>
+          <p>Auto-locks on browser close or configurable idle timeout. Password required to resume.</p>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="var(--accent)" stroke-width="1.5"/><path d="M12 8v4M12 16h.01" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <h4>AI sees no secrets</h4>
+          <p>The LLM only receives addresses, token balances, and contacts — never private keys or seeds.</p>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="3" width="18" height="18" rx="3" stroke="var(--accent)" stroke-width="1.5"/></svg>
+          </div>
+          <h4>Explicit approval</h4>
+          <p>Every dApp connection, transaction, and message sign triggers a dedicated approval popup.</p>
+        </div>
+      </div>
+      <p class="sec-warn">⚠ Experimental software — do not store significant funds.</p>
+    </div>
+  </section>
+
+  <!-- ── Install ── -->
+  <section class="section section-cta" id="install">
+    <div class="cta-glow"></div>
+    <div class="container">
+      <div class="install-block">
+        <img src="icon128.png" alt="Solar" class="install-icon" />
+        <h2>Ready to just<br/><em>say it?</em></h2>
+        <p>No Chrome Web Store — load unpacked in three steps.</p>
+        <ol class="install-list">
+          <li><span>Download the <strong>.zip</strong> and unpack it anywhere</span></li>
+          <li><span>Go to <code>chrome://extensions</code> → enable <strong>Developer Mode</strong> → click <strong>Load unpacked</strong> → select the folder</span></li>
+          <li><span>Open Solar → go to <strong>Settings</strong> → paste your API keys</span></li>
+        </ol>
+        <a href="solar.zip" download class="cta-primary cta-primary-lg">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download .zip
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <a class="nav-logo" href="#">
+        <img src="icon128.png" alt="Solar" style="width:18px;height:18px" />
+        Solar
+      </a>
+      <p>Built on Solana · Groq · Non-custodial</p>
+      <a href="https://x.com/GetSolarWallet" target="_blank" rel="noopener" class="footer-x">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.74l7.73-8.835L1.254 2.25H8.08l4.259 5.631 5.905-5.631zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        @GetSolarWallet
+      </a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
