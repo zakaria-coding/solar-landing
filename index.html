@@ -1,431 +1,1186 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Solar — Talk to your wallet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" href="icon128.png" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solar — Your Solana wallet. Speaks human.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --orange: #FF4300;
+  --orange-dim: rgba(255, 67, 0, 0.12);
+  --bg: #080808;
+  --fg: #F0EDE8;
+  --muted: #4a4a4a;
+  --muted-light: #888;
+  --border: rgba(255,255,255,0.07);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ─── CURSOR ─── */
+#cursor {
+  width: 8px;
+  height: 8px;
+  background: var(--orange);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width .2s ease, height .2s ease, opacity .2s ease;
+  mix-blend-mode: normal;
+}
+#cursor.hover {
+  width: 44px;
+  height: 44px;
+  opacity: .25;
+}
+
+/* ─── GRAIN ─── */
+#grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 900;
+  opacity: 1;
+}
+
+/* ─── NAV ─── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  padding: 28px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.nav-logo-icon {
+  width: 28px;
+  height: 28px;
+}
+.nav-logo-text {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--fg);
+}
+
+.nav-pill {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  padding: 10px 22px;
+  border: 1px solid var(--border);
+  color: var(--fg);
+  text-decoration: none;
+  border-radius: 100px;
+  transition: background .2s, border-color .2s, color .2s;
+  letter-spacing: 0.02em;
+}
+.nav-pill:hover {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: #000;
+}
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 140px 48px 100px;
+  position: relative;
+  overflow: hidden;
+}
+
+#hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 32px;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hero-eyebrow::before,
+.hero-eyebrow::after {
+  content: '';
+  width: 32px;
+  height: 1px;
+  background: var(--orange);
+  opacity: .5;
+}
+
+.hero-blob-wrap {
+  position: relative;
+  z-index: 2;
+  margin-bottom: 36px;
+}
+.hero-blob {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  animation: blob-float 5s ease-in-out infinite;
+  filter: drop-shadow(0 0 60px rgba(255, 67, 0, 0.35));
+}
+@keyframes blob-float {
+  0%,100% { transform: translateY(0) rotate(-1deg); }
+  50%      { transform: translateY(-18px) rotate(1.5deg); }
+}
+
+.hero-headline {
+  font-size: clamp(44px, 7.5vw, 110px);
+  font-weight: 700;
+  letter-spacing: -0.055em;
+  line-height: 0.92;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 28px;
+}
+.hero-headline em {
+  font-style: normal;
+  color: var(--orange);
+}
+
+.hero-sub {
+  font-size: clamp(15px, 1.5vw, 18px);
+  color: var(--muted-light);
+  max-width: 420px;
+  line-height: 1.7;
+  margin-bottom: 48px;
+  position: relative;
+  z-index: 2;
+  font-weight: 400;
+}
+
+.hero-cta-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.btn-orange {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 15px 30px;
+  background: var(--orange);
+  color: #000;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background .2s, transform .15s;
+  letter-spacing: -0.01em;
+}
+.btn-orange:hover {
+  background: #ff6030;
+  transform: translateY(-2px);
+}
+
+.btn-ghost {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--muted-light);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color .2s;
+  letter-spacing: 0.01em;
+}
+.btn-ghost:hover { color: var(--fg); }
+
+/* ─── TICKER ─── */
+.ticker-wrap {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+  padding: 13px 0;
+  white-space: nowrap;
+}
+.ticker-track {
+  display: inline-flex;
+  animation: ticker-scroll 28s linear infinite;
+}
+.ticker-item {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 44px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ticker-dot { color: var(--orange); font-size: 8px; }
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ─── SECTION BASE ─── */
+.section-wrap {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 48px;
+}
+
+.eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 20px;
+}
+
+/* ─── DEMO SECTION ─── */
+.demo-section {
+  padding: 140px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.demo-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.demo-copy {}
+
+.demo-headline {
+  font-size: clamp(30px, 3.8vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  line-height: 1.04;
+  margin-bottom: 20px;
+}
+
+.demo-body {
+  font-size: 16px;
+  color: var(--muted-light);
+  line-height: 1.8;
+  max-width: 400px;
+}
+
+/* Extension mockup */
+.ext-mockup {
+  background: #0d0d0d;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,67,0,0.06);
+  position: relative;
+}
+.ext-mockup::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,67,0,0.4), transparent);
+}
+
+.ext-header {
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ext-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ext-brand-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+.ext-brand-name {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.ext-balance {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--muted-light);
+}
+.ext-balance span {
+  color: var(--fg);
+}
+
+.ext-chat {
+  padding: 20px 16px;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chat-msg {
+  display: flex;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .35s ease, transform .35s ease;
+}
+.chat-msg.show { opacity: 1; transform: translateY(0); }
+.chat-msg.from-user { justify-content: flex-end; }
+
+.bubble {
+  max-width: 82%;
+  padding: 9px 13px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12.5px;
+  line-height: 1.5;
+  border-radius: 14px;
+}
+
+.bubble-user {
+  background: var(--orange);
+  color: #000;
+  font-weight: 500;
+  border-bottom-right-radius: 3px;
+}
+
+.bubble-solar {
+  background: #161616;
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 3px;
+}
+
+.tx-card {
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: #0a0a0a;
+  border: 1px solid rgba(255,67,0,0.2);
+  border-radius: 9px;
+}
+.tx-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  margin-bottom: 5px;
+  gap: 16px;
+}
+.tx-row:last-child { margin-bottom: 0; }
+.tx-label { color: #555; }
+.tx-val { color: var(--fg); font-weight: 500; }
+
+.confirm-strip {
+  margin-top: 10px;
+  width: 100%;
+  padding: 7px;
+  background: var(--orange);
+  color: #000;
+  font-family: 'DM Mono', monospace;
+  font-size: 11.5px;
+  font-weight: 500;
+  text-align: center;
+  border-radius: 6px;
+}
+
+.typing-dots {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  padding: 9px 13px;
+  background: #161616;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  border-bottom-left-radius: 3px;
+  width: fit-content;
+}
+.dot {
+  width: 5px; height: 5px;
+  background: #555;
+  border-radius: 50%;
+  animation: dot-bounce 1.1s ease-in-out infinite;
+}
+.dot:nth-child(2) { animation-delay: .18s; }
+.dot:nth-child(3) { animation-delay: .36s; }
+@keyframes dot-bounce {
+  0%,60%,100% { transform: translateY(0); }
+  30% { transform: translateY(-5px); }
+}
+
+.ext-input {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ext-input-field {
+  flex: 1;
+  background: #161616;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--muted-light);
+  outline: none;
+  cursor: default;
+}
+.ext-send-btn {
+  width: 32px; height: 32px;
+  background: var(--orange);
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ─── FEATURES ─── */
+.features-section {
+  padding: 140px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.features-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 64px;
+  gap: 40px;
+}
+.features-hl {
+  font-size: clamp(28px, 3.5vw, 48px);
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+}
+.features-sub {
+  font-size: 15px;
+  color: var(--muted-light);
+  max-width: 260px;
+  line-height: 1.7;
+  flex-shrink: 0;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+}
+.feat {
+  padding: 44px 40px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  transition: background .25s;
+}
+.feat::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px;
+  height: 0;
+  background: var(--orange);
+  transition: height .4s ease;
+}
+.feat:hover { background: #0d0d0d; }
+.feat:hover::after { height: 100%; }
+
+.feat-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  margin-bottom: 28px;
+}
+.feat-icon {
+  width: 36px; height: 36px;
+  color: var(--orange);
+  margin-bottom: 18px;
+}
+.feat-title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+.feat-desc {
+  font-size: 14.5px;
+  color: var(--muted-light);
+  line-height: 1.75;
+}
+
+/* ─── SECURITY (ORANGE) ─── */
+.security-section {
+  background: var(--orange);
+  padding: 140px 0;
+  position: relative;
+  overflow: hidden;
+}
+.security-section .eyebrow {
+  color: rgba(0,0,0,.45);
+}
+
+.security-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.security-hl {
+  font-size: clamp(32px, 4.5vw, 64px);
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  line-height: 0.96;
+  color: #000;
+  margin-bottom: 22px;
+}
+.security-body {
+  font-size: 16px;
+  color: rgba(0,0,0,.55);
+  line-height: 1.8;
+  max-width: 420px;
+}
+
+.security-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.stat-card {
+  background: rgba(0,0,0,0.1);
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 12px;
+  padding: 22px 24px;
+}
+.stat-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 26px;
+  font-weight: 500;
+  color: #000;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+.stat-label {
+  font-size: 13px;
+  color: rgba(0,0,0,.5);
+}
+
+.sec-bg-word {
+  position: absolute;
+  bottom: -60px;
+  right: -40px;
+  font-size: 22vw;
+  font-weight: 700;
+  letter-spacing: -0.06em;
+  color: rgba(0,0,0,0.07);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ─── FINAL CTA ─── */
+.cta-section {
+  padding: 180px 0 160px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-bg-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(255,67,0,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cta-hl {
+  font-size: clamp(48px, 9vw, 130px);
+  font-weight: 700;
+  letter-spacing: -0.06em;
+  line-height: 0.9;
+  margin-bottom: 48px;
+  position: relative;
+  z-index: 1;
+}
+.cta-hl em {
+  font-style: normal;
+  color: var(--orange);
+}
+
+.cta-btns {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 15px 28px;
+  border: 1px solid var(--border);
+  color: var(--muted-light);
+  font-size: 14px;
+  font-family: 'DM Mono', monospace;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: border-color .2s, color .2s;
+  letter-spacing: 0.01em;
+}
+.btn-outline:hover {
+  border-color: var(--fg);
+  color: var(--fg);
+}
+
+/* ─── FOOTER ─── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.footer-brand-icon { width: 22px; height: 22px; object-fit: contain; }
+.footer-brand-name {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.footer-note {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+
+/* ─── REVEAL ─── */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .75s ease, transform .75s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: .1s; }
+.reveal-delay-2 { transition-delay: .2s; }
+.reveal-delay-3 { transition-delay: .3s; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  nav { padding: 20px 24px; }
+  .hero { padding: 120px 24px 80px; }
+  .hero-blob { width: 140px; height: 140px; }
+  .section-wrap { padding: 0 24px; }
+  .demo-section { padding: 100px 0; }
+  .demo-inner { grid-template-columns: 1fr; gap: 48px; }
+  .demo-body { max-width: 100%; }
+  .features-section { padding: 100px 0; }
+  .features-top { flex-direction: column; align-items: flex-start; }
+  .features-sub { max-width: 100%; }
+  .features-grid { grid-template-columns: 1fr; }
+  .security-section { padding: 100px 0; }
+  .security-inner { grid-template-columns: 1fr; gap: 48px; }
+  .cta-section { padding: 120px 0 100px; }
+  footer { padding: 24px; flex-direction: column; gap: 16px; text-align: center; }
+}
+</style>
 </head>
 <body>
 
-  <div class="grain"></div>
+<canvas id="grain"></canvas>
+<div id="cursor"></div>
 
-  <!-- ── Nav ── -->
-  <nav class="nav">
-    <div class="nav-inner">
-      <a class="nav-logo" href="#">
-        <img src="icon128.png" alt="Solar" />
-        Solar
-      </a>
-      <div class="nav-links">
-        <a href="#features">Features</a>
-        <a href="#how">How it works</a>
-        <a href="#security">Security</a>
-      </div>
-      <a href="https://x.com/GetSolarWallet" target="_blank" rel="noopener" class="nav-x" title="@GetSolarWallet on X">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.74l7.73-8.835L1.254 2.25H8.08l4.259 5.631 5.905-5.631zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-      </a>
-      <a href="#install" class="nav-cta">Get Solar →</a>
-    </div>
-  </nav>
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <img src="solar.svg" class="nav-logo-icon" alt="Solar">
+    <span class="nav-logo-text">Solar</span>
+  </a>
+  <a href="#" class="nav-pill">Add to Chrome</a>
+</nav>
 
-  <!-- ── Hero ── -->
-  <section class="hero">
-    <div class="hero-bg-lines" aria-hidden="true">
-      <span></span><span style="visibility:hidden"></span><span></span><span></span><span></span>
-    </div>
+<!-- ════════════════ HERO ════════════════ -->
+<section class="hero">
+  <canvas id="hero-canvas"></canvas>
 
-    <div class="hero-layout">
-      <!-- left -->
-      <div class="hero-text">
-        <div class="hero-kicker">
-          <span class="kicker-dot"></span>
-          Solana · AI Agent · Non-custodial
-        </div>
-        <h1>
-          Talk<br/>
-          to your<br/>
-          <em>wallet.</em>
-        </h1>
-        <p class="hero-desc">
-          Solar turns plain language into signed transactions. Swap, send, burn, or manage tokens — just describe it in any language. The AI handles the rest.
-        </p>
-        <div class="hero-ctas">
-          <a href="#install" class="cta-primary">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v8M4.5 7l3.5 3.5L11.5 7M1 14h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Add to Chrome
-          </a>
-          <a href="#how" class="cta-ghost">How it works</a>
-        </div>
-        <div class="hero-stats">
-          <div class="stat"><strong>Llama 3.3</strong><span>70B model</span></div>
-          <div class="stat-sep"></div>
-          <div class="stat"><strong>Jupiter</strong><span>Swap routing</span></div>
-          <div class="stat-sep"></div>
-          <div class="stat"><strong>AES-GCM</strong><span>Encryption</span></div>
-        </div>
-      </div>
+  <p class="hero-eyebrow">Solana Wallet + AI Agent</p>
 
-      <!-- right -->
-      <div class="hero-mockup-wrap">
-        <div class="mockup-glow"></div>
-        <div class="chat-window">
-          <div class="cw-bar">
-            <div class="cw-dots"><i></i><i></i><i></i></div>
-            <span>Solar</span>
-          </div>
-          <div class="cw-body">
-            <div class="cw-msg cw-user"><span>swap 50 USDC for SOL</span></div>
-            <div class="cw-msg cw-agent">
-              <div class="cw-avatar"><img src="icon128.png" alt="" /></div>
-              <div class="cw-bubble">
-                <div class="qcard">
-                  <div class="qrow"><span>Pay</span><b>50 USDC</b></div>
-                  <div class="qrow"><span>Receive</span><b>≈ 0.312 SOL</b></div>
-                  <div class="qrow"><span>Impact</span><b class="ok">0.03%</b></div>
-                  <div class="qrow"><span>Route</span><b>Jupiter · 3 hops</b></div>
-                </div>
-                <div class="qoptions">
-                  <span class="qopt"><em>1.</em> Yes</span>
-                  <span class="qopt qopt-no"><em>2.</em> No</span>
-                </div>
-              </div>
-            </div>
-            <div class="cw-msg cw-user"><span>close all empty accounts</span></div>
-            <div class="cw-msg cw-agent">
-              <div class="cw-avatar"><img src="icon128.png" alt="" /></div>
-              <div class="cw-bubble">
-                Found <b>7 zero-balance accounts</b>. Closing them will reclaim <b>≈ 0.018 SOL</b> in rent.
-                <div class="qoptions">
-                  <span class="qopt"><em>1.</em> Yes</span>
-                  <span class="qopt qopt-no"><em>2.</em> No</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="cw-input">
-            <span class="cw-typed">1<span class="cw-cursor">|</span></span>
-            <button>
-              <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M12.5 1.5L1.5 7l5 1.5L8 12.5l4.5-11z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="hero-blob-wrap">
+    <img src="solar.svg" class="hero-blob" alt="Solar">
+  </div>
 
-    <a href="#features" class="scroll-hint" aria-label="Scroll down">
-      <span class="scroll-hint-label">scroll</span>
-      <span class="scroll-hint-arrow">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-      </span>
+  <h1 class="hero-headline">Crypto without<br>the <em>cryptic.</em></h1>
+
+  <p class="hero-sub">
+    Solar is the first Solana wallet with a built-in AI.
+    Just say what you want — it handles the rest.
+  </p>
+
+  <div class="hero-cta-group">
+    <a href="#" class="btn-orange">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm-1 14.5v-9l7 4.5-7 4.5z"/></svg>
+      Add to Chrome — Free
     </a>
+    <a href="#demo" class="btn-ghost">See it in action ↓</a>
+  </div>
+</section>
 
-  </section>
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track" id="tickerTrack">
+    <span class="ticker-item"><span class="ticker-dot">◆</span> The first Solana wallet with AI</span>
+    <span class="ticker-item"><span class="ticker-dot">◆</span> Swap any token by typing</span>
+    <span class="ticker-item"><span class="ticker-dot">◆</span> Your keys never leave your device</span>
+    <span class="ticker-item"><span class="ticker-dot">◆</span> Powered by Jupiter + Helius</span>
+    <span class="ticker-item"><span class="ticker-dot">◆</span> Self-custodial. Always.</span>
+    <span class="ticker-item"><span class="ticker-dot">◆</span> AES-256 encrypted vault</span>
+    <span class="ticker-item"><span class="ticker-dot">◆</span> Multi-account. Multi-token.</span>
+    <span class="ticker-item"><span class="ticker-dot">◆</span> The first Solana wallet with AI</span>
+    <span class="ticker-item"><span class="ticker-dot">◆</span> Swap any token by typing</span>
+    <span class="ticker-item"><span class="ticker-dot">◆</span> Your keys never leave your device</span>
+    <span class="ticker-item"><span class="ticker-dot">◆</span> Powered by Jupiter + Helius</span>
+    <span class="ticker-item"><span class="ticker-dot">◆</span> Self-custodial. Always.</span>
+    <span class="ticker-item"><span class="ticker-dot">◆</span> AES-256 encrypted vault</span>
+    <span class="ticker-item"><span class="ticker-dot">◆</span> Multi-account. Multi-token.</span>
+  </div>
+</div>
 
-  <!-- ── Features ── -->
-  <section class="section" id="features">
-    <div class="container">
-      <div class="section-head">
-        <p class="label">Features</p>
-        <h2>One wallet.<br/>Every move.</h2>
+<!-- ════════════════ DEMO ════════════════ -->
+<section class="demo-section" id="demo">
+  <div class="section-wrap">
+    <div class="demo-inner">
+
+      <div class="demo-copy reveal">
+        <p class="eyebrow">How it works</p>
+        <h2 class="demo-headline">Type what you want to do.</h2>
+        <p class="demo-body">
+          No menus to dig through. No hex addresses to paste.
+          Solar's AI reads plain language — then builds and signs the transaction.
+          Always shows you a preview before touching anything.
+        </p>
       </div>
 
-      <div class="feat-rows">
-
-        <div class="feat-row">
-          <div class="feat-row-text">
-            <div class="feat-tag">AI Agent</div>
-            <h3>No menus. Just words.</h3>
-            <p>Describe any transaction in plain English. Solar's AI agent — powered by Llama 3.3 70B via Groq — sees your full wallet state and translates intent into signed transactions.</p>
-            <div class="chips">
-              <span>"swap 100 USDC for BONK"</span>
-              <span>"send 0.5 SOL to alice"</span>
-              <span>"close empty token accounts"</span>
-              <span>"burn my DUST"</span>
-            </div>
+      <!-- Extension mockup -->
+      <div class="ext-mockup reveal reveal-delay-2">
+        <div class="ext-header">
+          <div class="ext-brand">
+            <img src="solar.svg" class="ext-brand-icon" alt="">
+            <span class="ext-brand-name">Solar</span>
           </div>
-          <div class="feat-row-visual ai-visual">
-            <div class="ai-flow">
-              <div class="ai-node input-node">
-                <span class="ai-node-label">You say</span>
-                <div class="ai-node-content">"swap 50 USDC for SOL"</div>
-              </div>
-              <div class="ai-arrow">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M10 4l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </div>
-              <div class="ai-node brain-node">
-                <span class="ai-node-label">Llama 3.3 70B</span>
-                <div class="ai-node-content">
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="8" width="14" height="12" rx="2"/><circle cx="9.5" cy="14" r="1.2" fill="var(--accent)" stroke="none"/><circle cx="14.5" cy="14" r="1.2" fill="var(--accent)" stroke="none"/><path d="M9 18h6"/></svg>
-                </div>
-              </div>
-              <div class="ai-arrow">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M10 4l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </div>
-              <div class="ai-node engine-node">
-                <span class="ai-node-label">Solar Engine</span>
-                <div class="ai-node-content engine-call">
-                  <img src="icon128.png" width="28" height="28" alt="" />
-                </div>
-              </div>
-              <div class="ai-arrow">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M10 4l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </div>
-              <div class="ai-node tx-node">
-                <span class="ai-node-label">Signed tx</span>
-                <div class="ai-node-content success-dot">✓ Sent</div>
-              </div>
-            </div>
-          </div>
+          <div class="ext-balance">Balance: <span id="ext-balance-val">12.48 SOL</span></div>
         </div>
 
-        <div class="feat-row feat-row-rev">
-          <div class="feat-row-text">
-            <div class="feat-tag">Swaps</div>
-            <h3>Jupiter-powered quotes, before you commit.</h3>
-            <p>ExactIn or ExactOut — spend a fixed amount or target a specific receive. Full quote preview with price impact, slippage, and multi-hop route shown before any confirmation.</p>
-          </div>
-          <div class="feat-row-visual">
-            <div class="swap-card">
-              <div class="swap-header">Quote preview</div>
-              <div class="swap-body">
-                <div class="swap-row"><span>You pay</span><strong>100 USDC</strong></div>
-                <div class="swap-row"><span>You receive</span><strong class="ok">≈ 0.624 SOL</strong></div>
-                <div class="swap-row"><span>Price impact</span><strong class="ok">0.05%</strong></div>
-                <div class="swap-row"><span>Slippage</span><strong>0.5%</strong></div>
-                <div class="swap-row"><span>Route</span><strong>Jupiter · 4 hops</strong></div>
-              </div>
-              <div class="swap-footer">
-                <span class="qopt"><em>1.</em> Yes</span>
-                <span class="qopt qopt-no"><em>2.</em> No</span>
-              </div>
-            </div>
-          </div>
+        <div class="ext-chat" id="chatContainer">
+          <!-- filled by JS -->
         </div>
 
-        <div class="feat-row">
-          <div class="feat-row-text">
-            <div class="feat-tag">Wallet</div>
-            <h3>Multiple accounts. Named contacts.</h3>
-            <p>Create or import as many wallets as you need, switch by name. Save contacts to your address book and use them naturally — "send 1 SOL to alex" just resolves.</p>
-          </div>
-          <div class="feat-row-visual">
-            <div class="contacts-card">
-              <div class="contacts-row">
-                <div class="contact-avatar" style="background:#d04e0c22;color:#d04e0c">A</div>
-                <div class="contact-info"><strong>alex</strong><span>8xF3…kB2m</span></div>
-                <span class="contact-check">✓</span>
-              </div>
-              <div class="contacts-row">
-                <div class="contact-avatar" style="background:#4cd96422;color:#4cd964">M</div>
-                <div class="contact-info"><strong>mom</strong><span>3rT9…wQ1n</span></div>
-              </div>
-              <div class="contacts-row">
-                <div class="contact-avatar" style="background:#5ac8fa22;color:#5ac8fa">B</div>
-                <div class="contact-info"><strong>bob</strong><span>Cv8h…pL5j</span></div>
-              </div>
-              <div class="contacts-add">
-                <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M7 1.5v11M1.5 7h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-                Add contact
-              </div>
-            </div>
+        <div class="ext-input">
+          <div class="ext-input-field" id="inputField">Ask Solar anything...</div>
+          <div class="ext-send-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#000"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
           </div>
         </div>
-
       </div>
+
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ── Coming Soon ── -->
-  <section class="section section-dark" id="coming-soon">
-    <div class="container">
-      <div class="section-head">
-        <p class="label soon-label">Coming soon</p>
-        <h2>What's next<br/>for Solar.</h2>
+<!-- ════════════════ FEATURES ════════════════ -->
+<section class="features-section">
+  <div class="section-wrap">
+    <div class="features-top reveal">
+      <div>
+        <p class="eyebrow">What's inside</p>
+        <h2 class="features-hl">Everything you need.<br>Nothing you don't.</h2>
       </div>
-
-      <div class="soon-grid">
-
-        <!-- Workflows -->
-        <div class="soon-card soon-card-large">
-          <div class="soon-badge">In development</div>
-          <div class="soon-card-inner">
-            <div class="soon-icon">
-              <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><rect x="2" y="6" width="7" height="5" rx="1.5" stroke="var(--accent)" stroke-width="1.4"/><rect x="17" y="6" width="7" height="5" rx="1.5" stroke="var(--accent)" stroke-width="1.4"/><rect x="9.5" y="15" width="7" height="5" rx="1.5" stroke="var(--accent)" stroke-width="1.4"/><path d="M9 8.5H5.5v6h7.5M17 8.5h-4M13 11v4" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <h3>Workflows</h3>
-            <p class="soon-desc">Background processes you program in plain language — no code, no scripts. Just describe what your wallet should do automatically, and Solar runs it silently in the background.</p>
-            <div class="workflow-examples">
-              <div class="wf-example">
-                <div class="wf-trigger">
-                  <span class="wf-label">Trigger</span>
-                  <span>"If SOL drops below $120"</span>
-                </div>
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M3 8l4 4 4-4" stroke="var(--t3)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <div class="wf-action">
-                  <span class="wf-label">Action</span>
-                  <span>"Swap 30% of my USDC to SOL"</span>
-                </div>
-              </div>
-              <div class="wf-example">
-                <div class="wf-trigger">
-                  <span class="wf-label">Trigger</span>
-                  <span>"Every Friday at 18:00"</span>
-                </div>
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M3 8l4 4 4-4" stroke="var(--t3)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <div class="wf-action">
-                  <span class="wf-label">Action</span>
-                  <span>"Send 10 USDC to savings wallet"</span>
-                </div>
-              </div>
-              <div class="wf-example">
-                <div class="wf-trigger">
-                  <span class="wf-label">Trigger</span>
-                  <span>"If my SOL balance exceeds 10"</span>
-                </div>
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M3 8l4 4 4-4" stroke="var(--t3)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <div class="wf-action">
-                  <span class="wf-label">Action</span>
-                  <span>"Swap the excess to USDC"</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Private transfers -->
-        <div class="soon-card">
-          <div class="soon-badge">In development</div>
-          <div class="soon-card-inner">
-            <div class="soon-icon">
-              <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M13 3C8 3 4 8 4 13s4 10 9 10 9-5 9-10S18 3 13 3z" stroke="var(--accent)" stroke-width="1.4"/><path d="M10 13s.8 2 3 2 3-2 3-2" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round"/><circle cx="10" cy="10.5" r="1" fill="var(--accent)"/><circle cx="16" cy="10.5" r="1" fill="var(--accent)"/><path d="M4 5L2 3M22 5l2-3" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round"/></svg>
-            </div>
-            <h3>Private Transfers</h3>
-            <p class="soon-desc">Send tokens without exposing the recipient or amount on-chain. Confidential transfers built directly into the Solar chat — same interface, zero trace.</p>
-            <div class="private-features">
-              <div class="pf-item">
-                <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Hidden sender &amp; recipient
-              </div>
-              <div class="pf-item">
-                <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Concealed transfer amount
-              </div>
-              <div class="pf-item">
-                <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Same natural language interface
-              </div>
-              <div class="pf-item">
-                <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                SOL &amp; SPL token support
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
+      <p class="features-sub">
+        A complete Solana wallet rethought around conversation.
+      </p>
     </div>
-  </section>
 
-  <!-- ── dApp ── -->
-  <section class="section section-dark" id="dapp">
-    <div class="container">
-      <div class="dapp-split">
-        <div>
-          <p class="label">dApp Integration</p>
-          <h2>Works with every<br/>Solana dApp.</h2>
-          <p class="dapp-sub">Wallet Standard and legacy <code>window.solana</code> — if a Solana dApp has a "Connect Wallet" button, Solar appears. Per-connection approval popup, per-transaction signing request. Nothing happens without your tap.</p>
-        </div>
-        <div class="dapp-badges">
-          <div class="dapp-badge">Wallet Standard</div>
-          <div class="dapp-badge">window.solana</div>
-          <div class="dapp-badge">signTransaction</div>
-          <div class="dapp-badge">signAndSendTransaction</div>
-          <div class="dapp-badge">signMessage</div>
-          <div class="dapp-badge">connect / disconnect</div>
-        </div>
+    <div class="features-grid">
+
+      <div class="feat reveal">
+        <p class="feat-num">01</p>
+        <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"/>
+        </svg>
+        <h3 class="feat-title">AI that actually executes</h3>
+        <p class="feat-desc">
+          Other AI wallets just chat. Solar acts. Say "swap 100 USDC for SOL" — it fetches the best route, builds the transaction, and asks you to confirm. Done.
+        </p>
       </div>
+
+      <div class="feat reveal reveal-delay-1">
+        <p class="feat-num">02</p>
+        <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/>
+        </svg>
+        <h3 class="feat-title">Your keys. Always.</h3>
+        <p class="feat-desc">
+          Self-custodial. Your seed phrases live encrypted in your browser — never on a server. Not even Solar can see them. Unlock with a password only you know.
+        </p>
+      </div>
+
+      <div class="feat reveal reveal-delay-2">
+        <p class="feat-num">03</p>
+        <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5"/>
+        </svg>
+        <h3 class="feat-title">Swaps, burns, closes — all of it</h3>
+        <p class="feat-desc">
+          Token swaps via Jupiter. SOL and SPL transfers. Burn dead tokens. Close empty accounts to reclaim rent. All through the same chat interface.
+        </p>
+      </div>
+
+      <div class="feat reveal reveal-delay-3">
+        <p class="feat-num">04</p>
+        <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"/>
+        </svg>
+        <h3 class="feat-title">Works with every dApp</h3>
+        <p class="feat-desc">
+          Implements both Wallet Standard and legacy window.solana — so Solar connects seamlessly to any Solana app. Pop it out into a full window for serious trading.
+        </p>
+      </div>
+
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ── Security ── -->
-  <section class="section" id="security">
-    <div class="container">
-      <div class="section-head">
-        <p class="label">Security</p>
-        <h2>Your keys never leave<br/>your device.</h2>
+<!-- ════════════════ SECURITY ════════════════ -->
+<section class="security-section">
+  <div class="section-wrap">
+    <div class="security-inner">
+
+      <div class="reveal">
+        <p class="eyebrow">Security</p>
+        <h2 class="security-hl">We never see your money.</h2>
+        <p class="security-body">
+          Solar is 100% self-custodial. Private keys are encrypted locally with AES-256-GCM. Your password goes through 600,000 rounds of PBKDF2 before it touches any key material. Nothing leaves your browser. We have no servers to breach.
+        </p>
       </div>
-      <div class="sec-grid">
-        <div class="sec-item">
-          <div class="sec-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 6v6c0 4.42 3.36 8.57 8 9.56C16.64 20.57 20 16.42 20 12V6l-8-4z" stroke="var(--accent)" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <h4>AES-GCM vault</h4>
-          <p>Keys encrypted with PBKDF2-derived key. Zero plaintext ever written to disk.</p>
+
+      <div class="security-stats reveal reveal-delay-2">
+        <div class="stat-card">
+          <div class="stat-val">AES-256-GCM</div>
+          <div class="stat-label">Encryption for all key material</div>
         </div>
-        <div class="sec-item">
-          <div class="sec-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="10" rx="2" stroke="var(--accent)" stroke-width="1.5"/><path d="M8 11V7a4 4 0 018 0v4" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/></svg>
-          </div>
-          <h4>Session lock</h4>
-          <p>Auto-locks on browser close or configurable idle timeout. Password required to resume.</p>
+        <div class="stat-card">
+          <div class="stat-val">600,000 ×</div>
+          <div class="stat-label">PBKDF2 iterations — password → key</div>
         </div>
-        <div class="sec-item">
-          <div class="sec-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="var(--accent)" stroke-width="1.5"/><path d="M12 8v4M12 16h.01" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/></svg>
-          </div>
-          <h4>AI sees no secrets</h4>
-          <p>The LLM only receives addresses, token balances, and contacts — never private keys or seeds.</p>
-        </div>
-        <div class="sec-item">
-          <div class="sec-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="3" width="18" height="18" rx="3" stroke="var(--accent)" stroke-width="1.5"/></svg>
-          </div>
-          <h4>Explicit approval</h4>
-          <p>Every dApp connection, transaction, and message sign triggers a dedicated approval popup.</p>
+        <div class="stat-card">
+          <div class="stat-val">0 servers</div>
+          <div class="stat-label">No backend. No custodian. Nothing to hack.</div>
         </div>
       </div>
-      <p class="sec-warn">⚠ Experimental software — do not store significant funds.</p>
+
     </div>
-  </section>
+  </div>
+  <div class="sec-bg-word">SAFE</div>
+</section>
 
-  <!-- ── Install ── -->
-  <section class="section section-cta" id="install">
-    <div class="cta-glow"></div>
-    <div class="container">
-      <div class="install-block">
-        <img src="icon128.png" alt="Solar" class="install-icon" />
-        <h2>Ready to just<br/><em>say it?</em></h2>
-        <p>No Chrome Web Store — load unpacked in three steps.</p>
-        <ol class="install-list">
-          <li><span>Download the <strong>.zip</strong> and unpack it anywhere</span></li>
-          <li><span>Go to <code>chrome://extensions</code> → enable <strong>Developer Mode</strong> → click <strong>Load unpacked</strong> → select the folder</span></li>
-          <li><span>Open Solar → go to <strong>Settings</strong> → paste your API keys</span></li>
-        </ol>
-        <a href="https://arweave.net/dXRfoNK5t3jC8QCO9Nh0dbIk_gYtT06PDMTMAQiC5Jo" download class="cta-primary cta-primary-lg">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Download .zip
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── Footer ── -->
-  <footer class="footer">
-    <div class="container footer-inner">
-      <a class="nav-logo" href="#">
-        <img src="icon128.png" alt="Solar" style="width:18px;height:18px" />
-        Solar
+<!-- ════════════════ CTA ════════════════ -->
+<section class="cta-section">
+  <div class="cta-bg-glow"></div>
+  <div class="section-wrap">
+    <p class="eyebrow reveal" style="margin-bottom:28px;">Ready?</p>
+    <h2 class="cta-hl reveal">
+      Talk to your<br><em>wallet.</em>
+    </h2>
+    <div class="cta-btns reveal">
+      <a href="#" class="btn-orange" style="font-size:16px; padding:17px 36px;">
+        Add to Chrome — Free
       </a>
-      <p>Built on Solana · Groq · Non-custodial</p>
-      <a href="https://x.com/GetSolarWallet" target="_blank" rel="noopener" class="footer-x">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.74l7.73-8.835L1.254 2.25H8.08l4.259 5.631 5.905-5.631zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-        @GetSolarWallet
+      <a href="https://github.com" class="btn-outline">
+        View source →
       </a>
     </div>
-  </footer>
+  </div>
+</section>
 
-  <script src="script.js"></script>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <img src="solar.svg" class="footer-brand-icon" alt="">
+    <span class="footer-brand-name">Solar</span>
+  </div>
+  <p class="footer-note">Built on Solana · Self-custodial forever · © 2025</p>
+</footer>
+
+<script>
+// ══════════════════════════════════════
+// GRAIN CANVAS
+// ══════════════════════════════════════
+(function() {
+  const c = document.getElementById('grain');
+  const ctx = c.getContext('2d');
+  let frame = 0;
+  function resize() {
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  c.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:900;opacity:.028;';
+
+  function draw() {
+    const id = ctx.createImageData(c.width, c.height);
+    const d = id.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const v = Math.random() * 255 | 0;
+      d[i] = d[i+1] = d[i+2] = v;
+      d[i+3] = 255;
+    }
+    ctx.putImageData(id, 0, 0);
+    frame++;
+    if (frame % 2 === 0) requestAnimationFrame(draw);
+    else setTimeout(() => requestAnimationFrame(draw), 50);
+  }
+  draw();
+})();
+
+// ══════════════════════════════════════
+// HERO PARTICLES
+// ══════════════════════════════════════
+(function() {
+  const c = document.getElementById('hero-canvas');
+  const ctx = c.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() {
+    W = c.width = c.offsetWidth;
+    H = c.height = c.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  for (let i = 0; i < 55; i++) {
+    particles.push({
+      x: Math.random() * 1000,
+      y: Math.random() * 1000,
+      r: Math.random() * 1.8 + 0.4,
+      vx: (Math.random() - .5) * 0.25,
+      vy: (Math.random() - .5) * 0.25,
+      a: Math.random() * 0.25 + 0.05,
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    for (const p of particles) {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = W;
+      if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H;
+      if (p.y > H) p.y = 0;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,67,0,${p.a})`;
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ══════════════════════════════════════
+// CURSOR
+// ══════════════════════════════════════
+const cursor = document.getElementById('cursor');
+let mx = -100, my = -100;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx + 'px';
+  cursor.style.top  = my + 'px';
+});
+document.querySelectorAll('a, button, .confirm-strip').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+});
+
+// ══════════════════════════════════════
+// SCROLL REVEAL
+// ══════════════════════════════════════
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+
+// ══════════════════════════════════════
+// CHAT DEMO
+// ══════════════════════════════════════
+const scenarios = [
+  {
+    user: 'send 2 SOL to alice.sol',
+    reply: 'Sure — here\'s the transaction:',
+    tx: { 'To': 'alice.sol', 'Amount': '2 SOL', 'Network fee': '~0.000005 SOL' },
+    done: '✓ Sent. Confirmed on-chain.',
+    balanceAfter: '10.48 SOL',
+  },
+  {
+    user: 'swap 150 USDC for SOL',
+    reply: 'Best route via Jupiter:',
+    tx: { 'Selling': '150 USDC', 'Receiving': '~0.95 SOL', 'Slippage': '0.5%' },
+    done: '✓ Swapped. SOL arrived.',
+    balanceAfter: '11.43 SOL',
+  },
+  {
+    user: 'close my empty token accounts',
+    reply: 'Found 6 empty accounts. Closing recovers:',
+    tx: { 'Accounts to close': '6', 'SOL recovered': '~0.012 SOL', 'Single tx': 'batched' },
+    done: '✓ Closed. 0.012 SOL returned.',
+    balanceAfter: '11.44 SOL',
+  },
+];
+
+const chatEl = document.getElementById('chatContainer');
+const balEl  = document.getElementById('ext-balance-val');
+const inputEl = document.getElementById('inputField');
+let idx = 0;
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function addMsg(html, cls, delay = 0) {
+  await sleep(delay);
+  const div = document.createElement('div');
+  div.className = 'chat-msg ' + cls;
+  div.innerHTML = html;
+  chatEl.appendChild(div);
+  chatEl.scrollTop = chatEl.scrollHeight;
+  requestAnimationFrame(() => div.classList.add('show'));
+  return div;
+}
+
+async function runDemo() {
+  while (true) {
+    const s = scenarios[idx % scenarios.length];
+    idx++;
+    chatEl.innerHTML = '';
+
+    // show prompt in input
+    await sleep(400);
+    inputEl.textContent = s.user;
+
+    await sleep(600);
+    inputEl.textContent = 'Ask Solar anything...';
+
+    // user bubble
+    await addMsg(`<div class="bubble bubble-user">${s.user}</div>`, 'from-user');
+
+    // typing
+    await sleep(300);
+    const typingDiv = await addMsg(
+      `<div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`,
+      ''
+    );
+    await sleep(1100);
+    typingDiv.remove();
+
+    // solar reply
+    const txRows = Object.entries(s.tx).map(([k, v]) =>
+      `<div class="tx-row"><span class="tx-label">${k}</span><span class="tx-val">${v}</span></div>`
+    ).join('');
+
+    await addMsg(`
+      <div class="bubble bubble-solar">
+        ${s.reply}
+        <div class="tx-card">
+          ${txRows}
+          <div class="confirm-strip">Confirm &amp; Sign</div>
+        </div>
+      </div>
+    `, '');
+
+    await sleep(2800);
+
+    // confirmed
+    await addMsg(
+      `<div class="bubble bubble-solar" style="color:#5cb85c; border-color:rgba(92,184,92,.25)">${s.done}</div>`,
+      ''
+    );
+    balEl.textContent = s.balanceAfter;
+
+    await sleep(2400);
+  }
+}
+
+// start demo when in view
+const demoObserver = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting) {
+    runDemo();
+    demoObserver.disconnect();
+  }
+}, { threshold: 0.3 });
+demoObserver.observe(document.getElementById('demo'));
+</script>
 </body>
 </html>
